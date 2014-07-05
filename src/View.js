@@ -1,8 +1,8 @@
-/*global $:true, _:true, T3:true */
+/*global $:true, _:true, T4:true */
 (function() {
   "use strict";
 
-  T3.View = function(model) {
+  T4.View = function(model) {
     this.model = model;
     this.canvas = $('#canvas');
 
@@ -22,7 +22,7 @@
     this.canvas.mouseleave(_.bind(this._mouseLeave, this));
   };
 
-  T3.View.prototype._mouseClick = function(event) {
+  T4.View.prototype._mouseClick = function(event) {
     this._onFreeSquare(event, function(square) {
       this.model.take(square);
       this.model.setMousedSquare(null);
@@ -30,14 +30,14 @@
     });
   };
 
-  T3.View.prototype._mouseMove = function(event) {
+  T4.View.prototype._mouseMove = function(event) {
     this._onFreeSquare(event, function(square) {
       this.model.setMousedSquare(square);
       this.update();
     });
   };
 
-  T3.View.prototype._mouseLeave = function(event) {
+  T4.View.prototype._mouseLeave = function(event) {
     this._onFreeSquare(event, function() {
       this.model.setMousedSquare(null);
       this.update();
@@ -46,7 +46,7 @@
 
   //call handler on free square corresponding to mouse position of event
   //if that square is free
-  T3.View.prototype._onFreeSquare = function(event, handler) {
+  T4.View.prototype._onFreeSquare = function(event, handler) {
     if (this.model.getWinner() !== null) {
       return;
     }
@@ -67,12 +67,12 @@
   };
 
 
-  T3.View.prototype.update = function() {
+  T4.View.prototype.update = function() {
     $('#status').text(this.model.getStatus());
     this._draw();
   };
 
-  T3.View.prototype._draw = function() {
+  T4.View.prototype._draw = function() {
     this.ctx.save();
     this.ctx.clearRect(0, 0, 1, 1);
 
@@ -81,7 +81,7 @@
     this.ctx.restore();
   };
 
-  T3.View.prototype._drawBoard = function() {
+  T4.View.prototype._drawBoard = function() {
     this.ctx.beginPath();
     this._drawColumnLines();
     this._drawRowLines();
@@ -94,7 +94,7 @@
     }
   };
 
-  T3.View.prototype._drawColumnLines = function() {
+  T4.View.prototype._drawColumnLines = function() {
     var size = this.model.getDimensions()[0];
     var nudge = this.pixel / 2;
     for (var column = 1; column < size; column++) {
@@ -104,7 +104,7 @@
     }
   };
 
-  T3.View.prototype._drawRowLines = function() {
+  T4.View.prototype._drawRowLines = function() {
     var size = this.model.getDimensions()[1];
     var nudge = this.pixel / 2;
     for (var row = 1; row < size; row++) {
@@ -114,14 +114,14 @@
     }
   };
 
-  T3.View.prototype._drawSquares = function() {
+  T4.View.prototype._drawSquares = function() {
     _.each(this.model.getSquares(), function(square) {
       var color = square.isHighlighted() ? 'red' : 'black';
       this._drawSquare(square, square.getOwner(), color);
     }, this);
   };
 
-  T3.View.prototype._drawSquare = function(square, player, color) {
+  T4.View.prototype._drawSquare = function(square, player, color) {
     this.ctx.beginPath();
 
     var cx = square.getCoords()[0] + 0.5;
@@ -131,7 +131,7 @@
     this._stroke(1 / 3, color);
   };
 
-  T3.View.prototype._drawSquare2 = function(x, y, player) {
+  T4.View.prototype._drawSquare2 = function(x, y, player) {
     if (player !== null) {
       if (player.getName() === 'X') {
         this._drawX(x, y);
@@ -143,7 +143,7 @@
     }
   };
 
-  T3.View.prototype._drawX = function(x, y) {
+  T4.View.prototype._drawX = function(x, y) {
     var r = this.symbolRadius;
     var nudge = this.pixel / 2;
     this.ctx.moveTo(x + nudge - r, y + nudge - r);
@@ -152,13 +152,13 @@
     this.ctx.lineTo(x + nudge - r, y + nudge + r);
   };
 
-  T3.View.prototype._drawO = function(x, y) {
+  T4.View.prototype._drawO = function(x, y) {
     var r = this.symbolRadius;
     this.ctx.moveTo(x + r, y);
     this.ctx.arc(x, y, r, 0, Math.PI * 2, false);
   };
 
-  T3.View.prototype._stroke = function(pixelWeight, color) {
+  T4.View.prototype._stroke = function(pixelWeight, color) {
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = this.pixel * pixelWeight;
     this.ctx.stroke();

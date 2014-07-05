@@ -1,8 +1,8 @@
-/*global _:true, T3:true */
+/*global _:true, T4:true */
 (function() {
   "use strict";
 
-  T3.Model = function(setup) {
+  T4.Model = function(setup) {
     // DIMENSIONS
     this.getDimensions = _.constant(setup.dimensions);
 
@@ -22,7 +22,7 @@
     };
 
     _.each(this.getCoords(), function(coord) {
-      board[coord] = new T3.Square(coord);
+      board[coord] = new T4.Square(coord);
     });
 
     this.getSquare = function(coord) {
@@ -36,7 +36,7 @@
     // PLAYERS
     var currentPlayer = null;
 
-    var players = [new T3.Player('X'), new T3.Player('O')];
+    var players = [new T4.Player('X'), new T4.Player('O')];
 
     this.getPlayers = _.constant(players);
 
@@ -67,7 +67,7 @@
   };
 
   //clear board and select a random current player
-  T3.Model.prototype.restart = function() {
+  T4.Model.prototype.restart = function() {
     var playerIndex = _.random(0, this.getPlayers().length - 1);
     this._setCurrentPlayer(this.getPlayers()[playerIndex]);
 
@@ -79,7 +79,7 @@
 
   //marks square (x,y) as owned by current player
   //and changes current player to other player
-  T3.Model.prototype.take = function(square) {
+  T4.Model.prototype.take = function(square) {
     _.checkContains(this.getSquares(), square);
 
     square._setOwner(this.getCurrentPlayer());
@@ -88,7 +88,7 @@
     this._setCurrentPlayer(nextPlayer);
   };
 
-  T3.Model.prototype._hasOpening = function() {
+  T4.Model.prototype._hasOpening = function() {
     return _.any(this.getSquares(), function(square) {
       return square.getOwner() === null;
     });
@@ -96,7 +96,7 @@
 
   //returns current winner or null if none
   //OPTIMIZE recalc only on move
-  T3.Model.prototype.getWinner = function() {
+  T4.Model.prototype.getWinner = function() {
     var winners = _.filter(this.getPlayers(), this._isWinner, this);
     if (winners.length === 0) {
       return null;
@@ -107,14 +107,14 @@
     throw "Multiple Winners";
   };
 
-  T3.Model.prototype._isWinner = function(player) {
+  T4.Model.prototype._isWinner = function(player) {
     //OPTMIIZE compute valid lines once
     return _.any(_.map(this._computeLines(), function(line) {
       return this._isWinningLine(player, line);
     }, this));
   };
 
-  T3.Model.prototype._isWinningLine = function(player, line) {
+  T4.Model.prototype._isWinningLine = function(player, line) {
     var playerOwnsLine = _.all(line, function(coords) {
       return this.getSquare(coords).getOwner() === player;
     }, this);
@@ -129,7 +129,7 @@
     return playerOwnsLine;
   };
 
-  T3.Model.prototype._computeLines = _.once(function() {
+  T4.Model.prototype._computeLines = _.once(function() {
     var deltas = _.product(_.repeat(_.range(-1, 2), this.getDimensions().length));
 
     //ignore lines that are either backward (all deltas negative/0)
@@ -152,7 +152,7 @@
     }, this);
   });
 
-  T3.Model.prototype._computeLine = function(square, deltas) {
+  T4.Model.prototype._computeLine = function(square, deltas) {
     var walk = function(step) {
       return _.map(_.range(this.getDimensions().length), function(axis) {
         return square.getCoords()[axis] + step * deltas[axis];
@@ -161,13 +161,13 @@
     return _.map(_.range(this.getWinLength()), walk, this);
   };
 
-  T3.Model.prototype.isInBounds = function(coord) {
+  T4.Model.prototype.isInBounds = function(coord) {
     return _.all(_.range(this.getDimensions().length), function(axis) {
       return 0 <= coord[axis] && coord[axis] < this.getDimensions()[axis];
     }, this);
   };
 
-  T3.Model.prototype.getStatus = function() {
+  T4.Model.prototype.getStatus = function() {
     if (this.getWinner() !== null) {
       return this.getWinner().getName() + " is the winner!";
     }
@@ -177,7 +177,7 @@
     return this.getCurrentPlayer().getName() + "'s move.";
   };
 
-  T3.Square = function(coords) {
+  T4.Square = function(coords) {
     var owner = null;
     var highlight = false;
     this.reset = function() {
@@ -204,7 +204,7 @@
     this.getCoords = _.constant(coords);
   };
 
-  T3.Player = function(name) {
+  T4.Player = function(name) {
     this.getName = _.constant(name);
   };
 
