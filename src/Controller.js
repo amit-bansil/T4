@@ -8,7 +8,7 @@
       winLength: 4
     };
     this.model = new T4.Model(setup);
-    this.view = new T4.View(this.model);
+    this.view = new T4.View(this.model, $('#canvas'));
 
     $('#restart').click(_.bind(this.restart, this)).click();
   };

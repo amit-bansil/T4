@@ -2,9 +2,9 @@
 (function() {
   "use strict";
 
-  T4.View = function(model) {
+  T4.View = function(model, canvas) {
     this.model = model;
-    this.canvas = $('#canvas');
+    this.canvas = canvas;
 
     var width = this.canvas.width();
     var height = this.canvas.height();
