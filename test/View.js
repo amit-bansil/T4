@@ -1,5 +1,7 @@
 /*global $:true, _:true, T4:true */
 (function() {
+  "use strict";
+
   function testView(options) {
     var setup = {
       dimensions: options.dimensions,
