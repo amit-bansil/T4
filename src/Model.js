@@ -128,7 +128,7 @@
     return playerOwnsLine;
   };
 
-  T4.Model.prototype._computeLines = _.once(function() {
+  T4.Model.prototype._computeLines = function() {
     var deltas = _.product(_.repeat(_.range(-1, 2), this.getDimensions().length));
 
     //ignore lines that are either backward (all deltas negative/0)
@@ -149,7 +149,7 @@
     return _.filter(lines, function(line) {
       return _.all(line, this.isInBounds, this);
     }, this);
-  });
+  };
 
   T4.Model.prototype._computeLine = function(square, deltas) {
     var walk = function(step) {
