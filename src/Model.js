@@ -1,71 +1,72 @@
 /*global _:true, T4:true */
 (function() {
-    "use strict";
+  "use strict";
 
-    T4.Model = function(setup) {
-      // DIMENSIONS
-      this.getDimensions = _.constant(setup.dimensions);
+  T4.Model = function(setup) {
+    // DIMENSIONS
+    this.getDimensions = _.constant(setup.dimensions);
 
-      // BOARD
-      var board = {};
+    // BOARD
+    var board = {};
 
-      // return all corrdinates for axes startAxis through endAxis
-      this.getSubCoords = function(startAxis, endAxis) {
-        var selectedDimensions = this.getDimensions().slice(startAxis, endAxis + 1);
-        return _.product(_.map(selectedDimensions, function(dimension) {
-          return _.range(dimension);
-        }));
-      };
-
-      this.getCoords = function() {
-        return this.getSubCoords(0, this.getDimensions().length - 1);
-      };
-
-      _.each(this.getCoords(), function(coord) {
-        board[coord] = new T4.Square(coord);
-      });
-
-      this.getSquare = function(coord) {
-        return board[coord];
-      };
-
-      this.getSquares = function() {
-        return _.values(board);
-      };
-
-      // PLAYERS
-      var currentPlayer = null;
-
-      var players = [new T4.Player('X'), new T4.Player('O')];
-
-      this.getPlayers = _.constant(players);
-
-      this.getCurrentPlayer = function() {
-        return currentPlayer;
-      };
-
-      this._setCurrentPlayer = function(newCurrentPlayer) {
-        currentPlayer = newCurrentPlayer;
-      };
-
-      // MOUSED SQUARE
-      var mousedSquare = null;
-
-      this.getMousedSquare = function() {
-        return mousedSquare;
-      };
-
-      this.setMousedSquare = function(newMousedSquare) {
-        if (newMousedSquare !== null) {
-          _.checkContains(board, newMousedSquare);
-        }
-        mousedSquare = newMousedSquare;
-      };
-
-      // MISC
-      this.getWinLength = _.constant(setup.winLength);
+    // return all corrdinates for axes startAxis through endAxis
+    this.getSubCoords = function(startAxis, endAxis) {
+      var selectedDimensions = this.getDimensions().slice(startAxis, endAxis + 1);
+      return _.product(_.map(selectedDimensions, function(dimension) {
+        return _.range(dimension);
+      }));
     };
 
+    this.getCoords = function() {
+      return this.getSubCoords(0, this.getDimensions().length - 1);
+    };
+
+    _.each(this.getCoords(), function(coord) {
+      board[coord] = new T4.Square(coord);
+    });
+
+    this.getSquare = function(coord) {
+      return board[coord];
+    };
+
+    this.getSquares = function() {
+      return _.values(board);
+    };
+
+    // PLAYERS
+    var currentPlayer = null;
+
+    var players = [new T4.Player('X'), new T4.Player('O')];
+
+    this.getPlayers = _.constant(players);
+
+    this.getCurrentPlayer = function() {
+      return currentPlayer;
+    };
+
+    this._setCurrentPlayer = function(newCurrentPlayer) {
+      currentPlayer = newCurrentPlayer;
+    };
+
+    // MOUSED SQUARE
+    var mousedSquare = null;
+
+    this.getMousedSquare = function() {
+      return mousedSquare;
+    };
+
+    this.setMousedSquare = function(newMousedSquare) {
+      if (newMousedSquare !== null) {
+        _.checkContains(board, newMousedSquare);
+      }
+      mousedSquare = newMousedSquare;
+    };
+
+    // MISC
+    this.getWinLength = _.constant(setup.winLength);
+  };
+
+  T4.Model.prototype.restart = function() {
     //clear board and set current player to be first player
     this._setCurrentPlayer(this.getPlayers()[0]);
 
