@@ -134,9 +134,9 @@
     //ignore lines that are either backward (all deltas negative/0)
     //or points (all deltas zero) by only including those
     //deltas that are positive in atleast 1 direction
-    var isPositive = function(value) {
+    function isPositive(value) {
       return value > 0;
-    };
+    }
     var increasingDeltas = _.filter(deltas, function(delta) {
       return _.any(delta, isPositive);
     });
