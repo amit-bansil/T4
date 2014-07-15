@@ -30,10 +30,8 @@
   };
 
   T4.View.prototype._mouseLeave = function(event) {
-    this._onFreeSquare(event, function() {
-      this.model.setMousedSquare(null);
-      this.update();
-    });
+    this.model.setMousedSquare(null);
+    this.update();
   };
 
   //call handler on free square corresponding to mouse position of event
