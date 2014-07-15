@@ -4,16 +4,6 @@
 
   T4.View = function(model, canvas) {
     this.model = model;
-    this.canvas = canvas;
-
-    var width = this.canvas.width();
-    var height = this.canvas.height();
-
-    this.ctx = this.canvas[0].getContext('2d');
-
-    this.ctx.scale(width, height);
-
-    this.pixel = 1 / width;
 
     this.symbolRadius = 1 / (_.min(this.model.getDimensions()) * 10);
 
@@ -134,34 +124,13 @@
   T4.View.prototype._drawSquare2 = function(x, y, player) {
     if (player !== null) {
       if (player.getName() === 'X') {
-        this._drawX(x, y);
+        this.pen.drawX(this.symbolRadius);
       } else if (player.getName() === 'O') {
-        this._drawO(x, y);
+        this.pen.drawO(this.symbolRadius);
       } else {
         throw "unexpected player name: " + player.getName();
       }
     }
-  };
-
-  T4.View.prototype._drawX = function(x, y) {
-    var r = this.symbolRadius;
-    var nudge = this.pixel / 2;
-    this.ctx.moveTo(x + nudge - r, y + nudge - r);
-    this.ctx.lineTo(x + nudge + r, y + nudge + r);
-    this.ctx.moveTo(x + nudge + r, y + nudge - r);
-    this.ctx.lineTo(x + nudge - r, y + nudge + r);
-  };
-
-  T4.View.prototype._drawO = function(x, y) {
-    var r = this.symbolRadius;
-    this.ctx.moveTo(x + r, y);
-    this.ctx.arc(x, y, r, 0, Math.PI * 2, false);
-  };
-
-  T4.View.prototype._stroke = function(pixelWeight, color) {
-    this.ctx.strokeStyle = color;
-    this.ctx.lineWidth = this.pixel * pixelWeight;
-    this.ctx.stroke();
   };
 
 }());
