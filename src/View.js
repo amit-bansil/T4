@@ -82,9 +82,8 @@
     var size = this.model.getDimensions()[axis];
     var pen = this.pen.weightChild(1 / 9).colorChild('black');
     for (var cell = 1; cell < size; cell++) {
-      pen.positionChild(
-        this.pen.perpendicular(axis), cell / size).
-      drawLine(axis);
+      pen.positionChild(axis, cell / size).
+      drawLine(this.pen.perpendicular(axis));
     }
   };
 
