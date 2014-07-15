@@ -40,7 +40,7 @@
     if (this.model.getWinner() !== null) {
       return;
     }
-
+    //push into pen
     var pixelX = event.pageX - this.canvas.offset().left;
     var pixelY = event.pageY - this.canvas.offset().top;
 
@@ -74,12 +74,15 @@
     this._drawSquares();
 
     if (this.model.getMousedSquare() !== null) {
-      this._drawSquare(this.model.getMousedSquare(), this.model.getCurrentPlayer(), 'purple');
+      //extract constant
+      this._drawSquare(this.model.getMousedSquare(),
+        this.model.getCurrentPlayer(), 'purple');
     }
   };
 
   T4.View.prototype._drawGridLines = function(axis) {
     var size = this.model.getDimensions()[axis];
+    //extract constant
     var pen = this.pen.weightChild(1 / 9).colorChild('black');
     for (var cell = 1; cell < size; cell++) {
       pen.positionChild(axis, cell / size).
@@ -89,6 +92,7 @@
 
   T4.View.prototype._drawSquares = function() {
     _.each(this.model.getSquares(), function(square) {
+      //extract constant
       var color = square.isHighlighted() ? 'red' : 'black';
       this._drawSquare(square, square.getOwner(), color);
     }, this);
@@ -106,6 +110,7 @@
     }
     var pen = transformForAxis(this.pen, this.pen.X_AXIS);
     pen = transformForAxis(pen, pen.Y_AXIS);
+    //extract constant
     pen = pen.weightChild(1 / 3).colorChild(color);
 
     if (player !== null) {
