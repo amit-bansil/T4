@@ -2,12 +2,21 @@
 (function() {
   "use strict";
 
+  var SYMBOL_HIGHLIGHT_COLOR = 'red';
+  var SYBMOL_MOUSED_COLOR = 'purple';
+  var SYMBOL_DEFAULT_COLOR = 'black';
+  var GRID_LINE_WEIGHT = 1 / 9;
+  var GRID_LINE_COLOR = 'black';
+  var SYMBOL_RADIUS = 1 / 10;
+  var SYMBOL_WEIGHT = 1 / 3;
+
   T4.View = function(model, canvas) {
     this.model = model;
     this.pen = new T4.Pen(canvas);
     this.canvas = canvas;
 
-    this.symbolRadius = 1 / (_.min(this.model.getDimensions()) * 10);
+    this.symbolRadius = (1 / _.min(this.model.getDimensions())) *
+      SYMBOL_RADIUS;
 
     canvas.click(_.bind(this._mouseClick, this));
     canvas.mousemove(_.bind(this._mouseMove, this));
@@ -76,14 +85,14 @@
     if (this.model.getMousedSquare() !== null) {
       //extract constant
       this._drawSquare(this.model.getMousedSquare(),
-        this.model.getCurrentPlayer(), 'purple');
+        this.model.getCurrentPlayer(), SYBMOL_MOUSED_COLOR);
     }
   };
 
   T4.View.prototype._drawGridLines = function(axis) {
     var size = this.model.getDimensions()[axis];
     //extract constant
-    var pen = this.pen.weightChild(1 / 9).colorChild('black');
+    var pen = this.pen.weightChild(GRID_LINE_WEIGHT).colorChild(GRID_LINE_COLOR);
     for (var cell = 1; cell < size; cell++) {
       pen.positionChild(axis, cell / size).
       drawLine(this.pen.perpendicular(axis));
@@ -93,7 +102,7 @@
   T4.View.prototype._drawSquares = function() {
     _.each(this.model.getSquares(), function(square) {
       //extract constant
-      var color = square.isHighlighted() ? 'red' : 'black';
+      var color = square.isHighlighted() ? SYMBOL_HIGHLIGHT_COLOR : SYMBOL_DEFAULT_COLOR;
       this._drawSquare(square, square.getOwner(), color);
     }, this);
   };
@@ -111,7 +120,7 @@
     var pen = transformForAxis(this.pen, this.pen.X_AXIS);
     pen = transformForAxis(pen, pen.Y_AXIS);
     //extract constant
-    pen = pen.weightChild(1 / 3).colorChild(color);
+    pen = pen.weightChild(SYMBOL_WEIGHT).colorChild(color);
 
     if (player !== null) {
       if (player.getName() === 'X') {
