@@ -106,9 +106,6 @@
       this.ctx.moveTo(this.position[axis], position + nudge);
       this.ctx.lineTo(this.position[axis] + this.size[axis],
         position + nudge);
-      console.log(this.position[axis], position + nudge);
-      console.log(this.position[axis] + this.size[axis],
-        position + nudge);
     } else {
       this.ctx.moveTo(position + nudge, this.position[axis]);
       this.ctx.lineTo(position + nudge, this.position[axis] +
