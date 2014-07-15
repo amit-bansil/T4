@@ -4,12 +4,14 @@
 
   T4.View = function(model, canvas) {
     this.model = model;
+    this.pen = new T4.Pen(canvas);
+    this.canvas = canvas;
 
     this.symbolRadius = 1 / (_.min(this.model.getDimensions()) * 10);
 
-    this.canvas.click(_.bind(this._mouseClick, this));
-    this.canvas.mousemove(_.bind(this._mouseMove, this));
-    this.canvas.mouseleave(_.bind(this._mouseLeave, this));
+    canvas.click(_.bind(this._mouseClick, this));
+    canvas.mousemove(_.bind(this._mouseMove, this));
+    canvas.mouseleave(_.bind(this._mouseLeave, this));
   };
 
   T4.View.prototype._mouseClick = function(event) {
@@ -63,19 +65,13 @@
   };
 
   T4.View.prototype._draw = function() {
-    this.ctx.save();
-    this.ctx.clearRect(0, 0, 1, 1);
-
+    this.pen.clear();
     this._drawBoard();
-
-    this.ctx.restore();
   };
 
   T4.View.prototype._drawBoard = function() {
-    this.ctx.beginPath();
-    this._drawColumnLines();
-    this._drawRowLines();
-    this._stroke(1 / 9, 'black');
+    this._drawGridLines(this.pen.X_AXIS);
+    this._drawGridLines(this.pen.Y_AXIS);
 
     this._drawSquares();
 
@@ -84,23 +80,13 @@
     }
   };
 
-  T4.View.prototype._drawColumnLines = function() {
-    var size = this.model.getDimensions()[0];
-    var nudge = this.pixel / 2;
-    for (var column = 1; column < size; column++) {
-      var pixelX = column / size;
-      this.ctx.moveTo(pixelX + nudge, 0);
-      this.ctx.lineTo(pixelX + nudge, 1);
-    }
-  };
-
-  T4.View.prototype._drawRowLines = function() {
-    var size = this.model.getDimensions()[1];
-    var nudge = this.pixel / 2;
-    for (var row = 1; row < size; row++) {
-      var pixelY = row / size;
-      this.ctx.moveTo(0, pixelY + nudge);
-      this.ctx.lineTo(1, pixelY + nudge);
+  T4.View.prototype._drawGridLines = function(axis) {
+    var size = this.model.getDimensions()[axis];
+    var pen = this.pen.weightChild(1 / 9).colorChild('black');
+    for (var cell = 1; cell < size; cell++) {
+      pen.positionChild(
+        this.pen.perpendicular(axis), cell / size).
+      drawLine(axis);
     }
   };
 
@@ -112,21 +98,24 @@
   };
 
   T4.View.prototype._drawSquare = function(square, player, color) {
-    this.ctx.beginPath();
+    var that = this;
 
-    var cx = square.getCoords()[0] + 0.5;
-    var cy = square.getCoords()[1] + 0.5;
-    this._drawSquare2(cx / this.model.getDimensions()[0], cy / this.model.getDimensions()[1], player);
+    function transformForAxis(pen, axis) {
+      var cellPosition = square.getCoords()[axis];
+      var cellCount = that.model.getDimensions()[axis];
+      pen = pen.positionChild(axis, cellPosition / cellCount);
+      pen = pen.sizeChild(axis, 1 / cellCount);
+      return pen;
+    }
+    var pen = transformForAxis(this.pen, this.pen.X_AXIS);
+    pen = transformForAxis(pen, pen.Y_AXIS);
+    pen = pen.weightChild(1 / 3).colorChild(color);
 
-    this._stroke(1 / 3, color);
-  };
-
-  T4.View.prototype._drawSquare2 = function(x, y, player) {
     if (player !== null) {
       if (player.getName() === 'X') {
-        this.pen.drawX(this.symbolRadius);
+        pen.drawX(this.symbolRadius);
       } else if (player.getName() === 'O') {
-        this.pen.drawO(this.symbolRadius);
+        pen.drawO(this.symbolRadius);
       } else {
         throw "unexpected player name: " + player.getName();
       }
