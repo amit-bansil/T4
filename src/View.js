@@ -76,7 +76,7 @@
     this._drawSquares();
 
     if (this.model.getMousedSquare() !== null) {
-      this._drawSquare(this.model.getMousedSquare(), this.model.getCurrentPlayer(), 'black');
+      this._drawSquare(this.model.getMousedSquare(), this.model.getCurrentPlayer(), 'purple');
     }
   };
 
