@@ -22,6 +22,8 @@
 
     this.weight = 1;
     this.color = 'black';
+
+    this.hitMasks = [];
   };
 
   T4.Pen.prototype.X_AXIS = 0;
@@ -71,10 +73,40 @@
     this.ctx.clearRect(this.position[this.X_AXIS],
       this.position[this.Y_AXIS],
       this.size[this.X_AXIS], this.size[this.Y_AXIS]);
+    this.hitMasks.length = 0;
   };
 
-  T4.Pen.prototype.on = function() {
+  T4.Pen.prototype.on = function(eventName, callback, context) {
+    var that = this;
+    this.canvas.on(eventName, function(event) {
+      var pixelX = event.pageX - that.canvas.offset().left;
+      var pixelY = event.pageY - that.canvas.offset().top;
 
+      var percentX = pixelX / that.canvas.width();
+      var percentY = pixelY / that.canvas.height();
+
+      function inRange(axis, mask, value) {
+        return mask.position[axis] < value &&
+          mask.position[axis] + mask.size[axis] > value;
+      }
+      var ret;
+      _.each(that.hitMasks, function(mask) {
+        if (inRange(that.X_AXIS, mask, percentX)) {
+          if (inRange(that.Y_AXIS, mask, percentY)) {
+            ret = mask.name;
+          }
+        }
+      }, that);
+      callback.call(context, ret);
+    });
+  };
+
+  T4.Pen.prototype.hitMask = function(name) { //TODO rename
+    this.hitMasks.push({
+      name: name,
+      position: _.clone(this.position),
+      size: _.clone(this.size)
+    });
   };
 
   T4.Pen.prototype.drawX = function(r) {

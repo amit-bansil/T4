@@ -18,21 +18,21 @@
     this.symbolRadius = (1 / _.min(this.model.getDimensions())) *
       SYMBOL_RADIUS;
 
-    canvas.click(_.bind(this._mouseClick, this));
-    canvas.mousemove(_.bind(this._mouseMove, this));
+    this.pen.on('click', this._mouseClick, this);
+    this.pen.on('mousemove', this._mouseMove, this);
     canvas.mouseleave(_.bind(this._mouseLeave, this));
   };
 
-  T4.View.prototype._mouseClick = function(event) {
-    this._onFreeSquare(event, function(square) {
+  T4.View.prototype._mouseClick = function(coords) {
+    this._onFreeSquare(coords, function(square) {
       this.model.take(square);
       this.model.setMousedSquare(null);
       this.update();
     });
   };
 
-  T4.View.prototype._mouseMove = function(event) {
-    this._onFreeSquare(event, function(square) {
+  T4.View.prototype._mouseMove = function(coords) {
+    this._onFreeSquare(coords, function(square) {
       this.model.setMousedSquare(square);
       this.update();
     });
@@ -45,21 +45,12 @@
 
   //call handler on free square corresponding to mouse position of event
   //if that square is free
-  T4.View.prototype._onFreeSquare = function(event, handler) {
+  T4.View.prototype._onFreeSquare = function(coords, handler) {
     if (this.model.getWinner() !== null) {
       return;
     }
-    //push into pen
-    var pixelX = event.pageX - this.canvas.offset().left;
-    var pixelY = event.pageY - this.canvas.offset().top;
 
-    var percentX = pixelX / this.canvas.width();
-    var percentY = pixelY / this.canvas.height();
-
-    var cellX = Math.floor(percentX * this.model.getDimensions()[0]);
-    var cellY = Math.floor(percentY * this.model.getDimensions()[1]);
-
-    var square = this.model.getSquare([cellX, cellY]);
+    var square = this.model.getSquare(coords);
     if (square && square.getOwner() === null) {
       handler.call(this, square);
     }
@@ -100,13 +91,14 @@
   T4.View.prototype._drawSquares = function() {
     _.each(this.model.getSquares(), function(square) {
       var color = square.isHighlighted() ? SYMBOL_HIGHLIGHT_COLOR : SYMBOL_DEFAULT_COLOR;
-      this._drawSquare(square, square.getOwner(), color);
+      var pen = this._drawSquare(square, square.getOwner(), color);
+      pen.hitMask(square.getCoords());
     }, this);
   };
 
   T4.View.prototype._drawSquare = function(square, player, color) {
     var that = this;
-
+    //TODO pull out
     function transformForAxis(pen, axis) {
       var cellPosition = square.getCoords()[axis];
       var cellCount = that.model.getDimensions()[axis];
@@ -127,6 +119,7 @@
         throw "unexpected player name: " + player.getName();
       }
     }
+    return pen;
   };
 
 }());
